@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTour</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body class="pt-[88px]"> 
+    <nav class="bg-white border-b-4 border-emerald-700 fixed top-0 left-0 w-full z-50">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="#" class="flex items-center space-x-1 rounded-2xl p-1.5 rtl:space-x-reverse">
+                <div id="circle" class="border rounded-full bg-emerald-700 w-[40px] h-[40px] flex items-center justify-center"><img src="./src/images/logo.png" class="h-8" alt="Logo" /></div>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap text-emerald-600">
+                    MedTour
+                </span>
+            </a>
+            <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Меню</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                </svg>
+            </button>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
+                    <li>
+                        <a href="#clinics" class="block py-2 px-3 text-emerald-600 font-semibold  md:hover:border-b-2 border-red-600 md:p-0">Клиники</a>
+                    </li>
+                    <li>
+                        <a href="#reviews" class="block py-2 px-3 text-emerald-600 font-semibold  md:hover:border-b-2 border-red-600 md:p-0">Отзывы</a>
+                    </li>
+                    <li>
+                        <a href="#feedback" class="block py-2 px-3 text-emerald-600 font-semibold  md:hover:border-b-2 border-red-600 md:p-0">Обратная связь</a>
+                    </li>
+                    <li>
+                        <a href="#contact" class="block py-2 px-3 text-emerald-600 font-semibold  md:hover:border-b-2 border-red-600 md:p-0">Контакты</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!--Slider/Carousel-->
+    <div id="slider">
+        <template>
+            <div class="relative w-full h-56 overflow-hidden">
+                <img :src="images[currentIndex]" alt="Image Slider" class="w-full h-56 object-cover">
+                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pr-10">
+                    <h2 class="text-xl text-white font-bold">{{ texts[currentIndex] }}</h2>
+                </div>
+                <div class="flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                    <span v-for="(image, index) in images" 
+                          :key="index" 
+                          @click="currentIndex = index" 
+                          class="cursor-pointer w-3 h-3 rounded-full mx-1" 
+                          :class="{'bg-red-600': currentIndex === index, 'bg-emerald-100': currentIndex !== index}">
+                    </span>
+                </div>
+            </div>
+        </template>
+    </div>
+    <script>
+        new Vue({
+            el: '#slider',
+            data: {
+                currentIndex: 0,
+                images: [
+                    './src/images/carousel-1.png',
+                    './src/images/carousel-2.png',
+                ],
+                texts: [
+                    'Доступ к высококачественной медицинской помощи',
+                    'Индивидуальный подход к каждому пациенту',
+                ]
+            },
+            methods: {
+                nextImage() {
+                    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+                },
+                autoSlide() {
+                    setInterval(this.nextImage, 3000); 
+                }
+            },
+            mounted() {
+                this.autoSlide();
+            }
+        });
+    </script>
+    
+    <!--Cards of clinics-->
+    <div id="app" class="container mx-auto px-4 py-8">
+        <h1 id="clinics" class="text-3xl font-bold mb-5 text-center text-emerald-700">Наши клиники</h1>
+        <hospital-profile v-for="hospital in hospitals" :key="hospital.id" :hospital="hospital"></hospital-profile>
+    </div>
+    <template id="hospital-profile-template">
+        <div class="transition ease-in-out delay-200 hover:scale-105 shadow-md rounded-2xl bg-white overflow-hidden mb-8 hover:shadow-md hover:shadow-emerald-600">
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <h2 class="text-2xl font-bold mb-0 pr-2">{{ hospital.name }}</h2>
+                    <span class="text-yellow-500">★★★★★</span>
+                </div>
+
+                <p class="text-gray-700 mb-4">{{ hospital.description }}</p>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-0">Специализации:</h3>
+                    <ul class="list-disc list-inside">
+                        <span v-for="specialization in hospital.specializations" :key="specialization" class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5">
+                            {{ specialization }}
+                        </span>
+                    </ul>
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-0">Доступные операции:</h3>
+                    <table class="bg-white border-separate border-spacing-2 border-slate-500 w-full">
+                        <tbody class="divide-y divide-slate-300">
+                            <tr v-for="operation in hospital.availableOperations" :key="operation.name">
+                                <td class="border border-slate-300 px-4 py-2">{{ operation.name }}</td>
+                                <td class="border border-slate-300 px-4 py-2 text-sm">{{ operation.cost }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Врачи:</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div v-for="doctor in hospital.doctors" :key="doctor.name" class="bg-gray-100 p-3 rounded">
+                            <h4 class="font-semibold">{{ doctor.name }}</h4>
+                            <p class="text-sm text-gray-600">{{ doctor.specialization }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="transition ease-in-out delay-200 bg-emerald-700 border-2 border-emerald-700 text-white font-bold py-1 px-2">
+                    Подробнее
+                </button>
+            </div>
+        </div>
+    </template>
+    <script>
+    Vue.component('hospital-profile', {
+        template: '#hospital-profile-template',
+        props: ['hospital']
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            hospitals: [
+                {
+                    id: 1,
+                    name: "Международный медицинский центр",
+                    description: "Ведущая клиника с современным оборудованием и опытными специалистами.",
+                    specializations: [
+                        "Кардиология",
+                        "Онкология",
+                        "Ортопедия",
+                        "Нейрохирургия"
+                    ],
+                    availableOperations: [
+                        { name: "Аортокоронарное шунтирование", cost: "от 25 000 €" },
+                        { name: "Эндопротезирование тазобедренного сустава", cost: "от 15 000 €" },
+                        { name: "Удаление опухоли головного мозга", cost: "от 30 000 €" },
+                        { name: "Химиотерапия", cost: "от 5 000 € за курс" }
+                    ],
+                    doctors: [
+                        { name: "Др. Иванов А.П.", specialization: "Кардиохирург" },
+                        { name: "Др. Петрова М.С.", specialization: "Онколог" },
+                        { name: "Др. Сидоров В.В.", specialization: "Ортопед" },
+                        { name: "Др. Козлова Е.А.", specialization: "Нейрохирург" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Центр инновационной медицины",
+                    description: "Специализируется на минимально инвазивных процедурах и роботизированной хирургии.",
+                    specializations: [
+                        "Роботизированная хирургия",
+                        "Трансплантология",
+                        "Эндокринология",
+                        "Гастроэнтерология"
+                    ],
+                    availableOperations: [
+                        { name: "Роботизированная простатэктомия", cost: "от 20 000 €" },
+                        { name: "Трансплантация печени", cost: "от 100 000 €" },
+                        { name: "Бариатрическая хирургия", cost: "от 12 000 €" },
+                        { name: "Эндоскопическая резекция желудка", cost: "от 8 000 €" }
+                    ],
+                    doctors: [
+                        { name: "Др. Смирнов И.К.", specialization: "Робот-хирург" },
+                        { name: "Др. Волкова А.Н.", specialization: "Трансплантолог" },
+                        { name: "Др. Кузнецов Д.С.", specialization: "Эндокринолог" },
+                        { name: "Др. Морозова О.В.", specialization: "Гастроэнтеролог" }
+                    ]
+                }
+            ]
+        }
+    });
+    </script>
+
+    <!--Reviews (slider)-->
+    <section id="reviews" class="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:px-8 w-full max-w-4xl mx-auto border-y-2 border-red-600">
+        <div class="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.red.100),white)] opacity-20"></div>
+        <div class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-red-600/10 ring-1 ring-red-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
+        <figure class="mt-10 text-center w-full h-64 flex flex-col justify-center items-center">
+            <blockquote class="text-xl font-semibold leading-8 text-gray-900 sm:text-xl sm:leading-9 h-full flex items-center justify-center">
+                <p>{{ reviews[currentIndex].text }}</p>
+            </blockquote>
+            <div class="mt-4 flex items-center justify-center space-x-3 text-base">
+                <div class="font-semibold text-gray-900">{{ reviews[currentIndex].author }}</div>
+                <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" class="fill-gray-900">
+                    <circle cx="1" cy="1" r="1" />
+                </svg>
+                <div class="text-gray-600">{{ reviews[currentIndex].role }}</div>
+            </div>
+        </figure>
+        <div class="flex justify-between mt-8">
+            <div class="border rounded-full bg-red-700 w-[40px] h-[40px] flex items-center justify-center">
+                <button @click="prevReview" class="font-bold text-white p-2 rounded-lg focus:outline-none">
+                    &lt;
+                </button>
+            </div>
+            <div class="border rounded-full bg-red-700 w-[40px] h-[40px] flex items-center justify-center">
+                <button @click="nextReview" class="bg-transparent font-bold text-white p-2 rounded-lg focus:outline-none">
+                    &gt;
+                </button>
+            </div>
+        </div>
+        <div class="flex justify-center mt-4">
+            <span v-for="(review, index) in reviews" 
+                :key="index" 
+                @click="currentIndex = index" 
+                class="cursor-pointer w-3 h-3 rounded-full mx-1" 
+                :class="{'bg-red-600': currentIndex === index, 'bg-gray-100': currentIndex !== index}">
+            </span>
+        </div>
+    </section>
+    <script>
+        new Vue({
+            el: '#reviews',
+            data: {
+                currentIndex: 0,
+                reviews: [
+                    {
+                        text: "“Я воспользовалась услугами данной платформы для организации медицинского тура в одну из клиник за границей, и осталась очень довольна. С самого начала мне предоставили полную информацию о доступных процедурах и специалистах. Процесс оформления был простым и понятным, а команда поддержки всегда была на связи, готовая ответить на все вопросы.”",
+                        author: "Judith Black",
+                        role: "Пациент"
+                    },
+                    {
+                        text: "“Платформа помогла мне найти отличного специалиста для моей процедуры. Я была приятно удивлена уровнем сервиса и поддержкой, которую я получила на каждом этапе.”",
+                        author: "Maria White",
+                        role: "Пациент"
+                    },
+                    {
+                        text: "“Лечение прошло на высоком уровне, и я получил качественную медицинскую помощь от опытных врачей. Платформа также помогла организовать мой отдых, что сделало поездку не только полезной, но и приятной. Я рекомендую эту платформу всем, кто ищет надежные решения в области медицинского туризма!”",
+                        author: "John Doe",
+                        role: "Пациент"
+                    }
+                ]
+            },
+            methods: {
+                nextReview() {
+                    this.currentIndex = (this.currentIndex + 1) % this.reviews.length;
+                },
+                prevReview() {
+                    this.currentIndex = (this.currentIndex - 1 + this.reviews.length) % this.reviews.length;
+                }
+            }
+        });
+    </script>
+
+    <!--Form of feedback-->
+    <div class="bg-white flex items-center justify-center h-screen">
+        <div id="feedback" class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h2 class="text-2xl font-semibold mb-4">Форма обратной связи</h2>
+            <form @submit.prevent="submitForm">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">ФИО</label>
+                    <input type="text" id="name" v-model="formData.name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-emerald-500">
+                </div>
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Номер телефона</label>
+                    <input type="tel" id="phone" v-model="formData.phone" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-emerald-500">
+                </div>
+                <div class="mb-4">
+                    <label for="clinic" class="block text-sm font-medium text-gray-700">Клиника</label>
+                    <select id="clinic" v-model="formData.clinic" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-emerald-500">
+                        <option value="" disabled selected>Выберите клинику</option>
+                        <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.name">{{ clinic.name }}</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="doctor" class="block text-sm font-medium text-gray-700">Врач</label>
+                    <select id="doctor" v-model="formData.doctor" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-emerald-500">
+                        <option value="" disabled selected>Выберите врача</option>
+                        <option v-for="doctor in doctors" :key="doctor.id" :value="doctor.name">{{ doctor.name }}</option>
+                    </select>
+                </div>
+                <button type="submit" class="mt-4 w-full bg-emerald-600 text-white py-2 rounded-md hover:bg-emerald-700 focus:outline-none">Отправить</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#feedback',
+            data: {
+                formData: {
+                    name: '',
+                    phone: '',
+                    clinic: '',
+                    doctor: ''
+                },
+                clinics: [
+                    { id: 1, name: "Международный медицинский центр" },
+                    { id: 2, name: "Центр инновационной медицины" },
+                ],
+                doctors: [
+                    { id: 1, name: 'Смирнов И.К.' },
+                    { id: 2, name: 'Кузнецов Д.С.' },
+                ]
+            },
+            methods: {
+                submitForm() {
+                    alert(`Форма отправлена:\nФИО: ${this.formData.name}\nТелефон: ${this.formData.phone}\nКлиника: ${this.formData.clinic}\nВрач: ${this.formData.doctor}`);
+                    this.formData = {
+                        name: '',
+                        phone: '',
+                        clinic: '',
+                        doctor: ''
+                    };
+                }
+            }
+        });
+    </script>
+    
+</body>
+
+<footer class="bg-white rounded-lg shadow m-4">
+    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+        <span class="text-sm text-gray-500 sm:text-center ">© 2024 <a href="#" class="hover:underline">MedTour™</a>. All Rights Reserved.
+        <p id="contact">По всем вопросам: +7 880 555 35 35</p>
+        <p>г. Санкт-Петербург, Невский проспект</p>
+    </span>
+    <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0">
+        <li>
+            <a href="#" class="hover:underline me-4 md:me-6">About</a>
+        </li>
+        <li>
+            <a href="#" class="hover:underline me-4 md:me-6">Privacy Policy</a>
+        </li>
+        <li>
+            <a href="#" class="hover:underline me-4 md:me-6">Licensing</a>
+        </li>
+        <li>
+            <a href="#" class="hover:underline">Contact</a>
+        </li>
+    </ul>
+    </div>
+</footer>
+
+</html>
